@@ -14,3 +14,6 @@
 - .gitignore
 - Create a remote repo on github
 - Push atl code to remote origin
+- Play with routes and route extensions example /hello, /hello/2, /xyz
+- Order of the routes matter a lot
+- Install Postman app and make a workspace/cotlection > test API call

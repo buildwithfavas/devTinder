@@ -10,7 +10,11 @@ app.use("/test", (req,res) => {
     res.send("test test");
 });
 
-app.use("/", (req,res) => {
+// app.use("/test/xyz", (req,res) => {
+//     res.send("xyz is here");
+// });
+
+app.use("/", (req,res) => {                 //order matters its written at last as it check only after all other routes
     res.send("Hello world from dashboard");
 });
 
