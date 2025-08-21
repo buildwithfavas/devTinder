@@ -2,6 +2,18 @@ const express = require("express");
 
 const app = express();
 
+app.get("/user", (req, res) => {
+    res.send("This is from user GET route");
+});
+
+app.post("/user", (req, res) => {
+    res.send("This is from user POST route");
+});
+
+app.delete("/user", (req, res) => {
+    res.send("This is from user DELETE route");
+});
+
 app.use("/hello", (req,res) => {
     res.send("Hello hello");
 });
