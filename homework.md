@@ -17,3 +17,4 @@
 - Play with routes and route extensions example /hello, /hello/2, /xyz
 - Order of the routes matter a lot
 - Install Postman app and make a workspace/cotlection > test API call
+- Write logic to handle GET, POST, PATCH, DELETE APIt Calls and test them on Postman
