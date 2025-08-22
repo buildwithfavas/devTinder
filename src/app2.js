@@ -22,6 +22,23 @@ app.get("/admin/deleteUser", adminAuth, (req, res) => {  //Call by using postman
     res.send("User deleted successfully");
 });
 
+app.get("/dummyError1", (req, res) => {
+    try{
+        throw new Error("This is a dummy error");
+    } catch (error) {
+        res.status(500).send("Something broke! Contact support team");
+    }
+});
+
+app.get("/dummyError2", (req, res) => {
+    throw new Error("This is a dummy error");
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);  //This is a dummy error and stack information
+    res.status(500).send("Something broke!");
+});
+
 app.listen(777, () => {
     console.log("Server succesfully listening to port 777");
 });
