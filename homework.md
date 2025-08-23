@@ -1,3 +1,7 @@
+- MonogoDb Documentation: https://mongoosejs.com/docs/queries.html
+------------------------------------------------------------------------------------------
+- Under app.js  Basics
+
 - Create a repository
 - Initialize the repository
 - node_modules, package.json,package-lock.json
@@ -22,6 +26,8 @@
 - Use of regex in routes /a/ , /.*fly$/
 - UseReading the query params in the routes
 - UseReading the dynamic routes
+------------------------------------------------------------------------------------------
+- Under app2.js    Route Handlers & Database
 
 - Multiple Route Handlers - Play with the code
 - next()
@@ -33,3 +39,30 @@
 - Write a dummy auth middleware for admin
 - Write a dummy auth middleware for all user routes, except /user/login
 - Error Handling using app.use("/",(err, req, res, next) => {});
+
+- Create a free cluster on MongoDB official website (Mongo Atlas)
+- Install mongoose library
+- Connect your application to the Database "Connection-url"/devTinder
+- Call the connectDB function and connect to database before starting application on 7777
+- Create a userSchema & user Model
+- Create POST /sigup API to add data to database
+- Push some documents using API calls from postman
+- Error Handling using try , catch
+------------------------------------------------------------------------------------------
+- Under app3.js       Database CRUD
+
+- JS object vs JSON (difference)
+- Add the express.json middleware to your app
+- Make your signup API dynamic to recive data from the end user
+- User.findOne with duptucate email ids, which object returned
+- API- Get user by email
+- API - Feed API - GET /feed - get all the users from the database
+- API - Get user by ID
+- Create a delete user API
+- Difference between PATCH and PUT
+- API - Update a user
+- Explore the Mongoose Documention for Model methods
+- What are options in a Model.findOneAndUpdate method, explore more about it
+- API - Update the user with email ID
+------------------------------------------------------------------------------------------
+
