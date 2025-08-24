@@ -3,32 +3,70 @@ require("dotenv").config();
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
-
+const { validateSignUpData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  // call from postman by post method pass a json object like below
-  //   {
-  //   "firstName": "Mohammed",
-  //   "lastName": "Favas",
-  //   "emailId": "mohammed.favas@example.com",
-  //   "password": "password123"
-  //   }
-
-  // or create a new instance of the User model
-  // const user = new User({
-  //     firstName: "Mohammed",
-  //     lastName: "Favas",
-  //     emailId: "mohammed.favas@example.com",
-  //     password: "password123"
-  // });
-  const user = new User(req.body);
   try {
+    
+    // call from postman by post method pass a json object like below
+    //   {
+    //   "firstName": "Mohammed",
+    //   "lastName": "Favas",
+    //   "emailId": "mohammed.favas@example.com",
+    //   "password": "password123"
+    //   }
+
+    // or create a new instance of the User model
+    // const user = new User({
+    //     firstName: "Mohammed",
+    //     lastName: "Favas",
+    //     emailId: "mohammed.favas@example.com",
+    //     password: "password123"
+    // });
+
+    //validation of data
+    validateSignUpData(req);
+
+    const {firstName, lastName, emailId, password} = req.body;
+
+    //encrypt the password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    //Create a new instance of the User model
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+    });
+
     await user.save();
     res.send("User registered successfully");
   } catch (error) {
     res.status(400).send("Error registering user: " + error.message);
+  }
+});
+
+app.post("/login", async (req,res) => {
+  try{
+    const {emailId, password} = req.body;
+
+    const user = await User.findOne({emailId: emailId});
+    if(!user){
+      throw new Error("Invalid credentials");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if(isPasswordValid){
+      res.send("Login Successfull!!!");
+    }else{
+      throw new Error("Invalid credentials");
+    }
+  }catch(err){
+    res.status(400).send("Error: " + err.message);
   }
 });
 
@@ -64,7 +102,6 @@ app.get("/userOne", async (req, res) => {
   } else {
     res.send(user);
   }
-
 });
 
 //Feed API - GET - get all the users from the databse
@@ -108,18 +145,20 @@ app.patch("/user/:userId", async (req, res) => {
 
   try {
     const ALLOWED_UPDATES = ["photoUrl", "about", "gender", "age", "skills"];
-    const isUpdateAllowed = Object.keys(data).every((key) => ALLOWED_UPDATES.includes(key));
+    const isUpdateAllowed = Object.keys(data).every((key) =>
+      ALLOWED_UPDATES.includes(key)
+    );
 
     if (!isUpdateAllowed) {
       throw new Error("Update not allowed");
     }
 
-    if(data?.skills.length > 10){
+    if (data?.skills.length > 10) {
       throw new Error("Cannot add more than 10 skills");
     }
 
-    const user = await User.findByIdAndUpdate(userId, updateData,{
-      returnDocument: 'after',
+    const user = await User.findByIdAndUpdate(userId, updateData, {
+      returnDocument: "after",
       runValidators: true,
     }); //options also available learn from documentation
     res.send("User updated successfully");
@@ -133,7 +172,9 @@ connectDB()
     console.log("Database connected successfully");
 
     app.listen(process.env.PORT || 777, () => {
-      console.log("Server successfully listening to port " + (process.env.PORT || 777));
+      console.log(
+        "Server successfully listening to port " + (process.env.PORT || 777)
+      );
     });
   })
   .catch((error) => {
