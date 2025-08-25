@@ -1,73 +1,131 @@
 const express = require("express");
-
+require("dotenv").config();
+const connectDB = require("./config/database");
 const app = express();
+const cookieParser = require("cookie-parser");
 
-// app.get("/.*fly$/",(req,res) =>{  //regex      only work on that route ends with fly.
-//     res.send("end with fly");
+app.use(express.json());
+app.use(cookieParser());
+
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const requestRouter = require("./routes/request");
+
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+
+connectDB()
+  .then(() => {
+    console.log("Database connected successfully");
+
+    app.listen(process.env.PORT || 777, () => {
+      console.log(
+        "Server successfully listening to port " + (process.env.PORT || 777)
+      );
+    });
+  })
+  .catch((error) => {
+    console.error("Database connection failed: " + error.message);
+  });
+
+
+
+
+
+// //Get user by email
+// app.get("/user", async (req, res) => {
+//   // call from postman by get method pass a json object emailId it will list all docs with that emailId
+//   //     {
+//   //     "emailId":"mohammed.favas@example.com"
+//   // }
+//   const userEmail = req.body.emailId;
+//   try {
+//     const users = await User.find({ emailId: userEmail });
+//     if (users.length === 0) {
+//       return res.status(404).send("User not found");
+//     } else {
+//       res.send(users);
+//     }
+//   } catch (error) {
+//     res.status(400).send("Error fetching user: " + error.message);
+//   }
 // });
 
-app.get("/a/",(req,res) =>{  //regex      only work for exact a.
-    res.send("its a regex contain exact a");
-});
-
-app.get("/a*bc",(req,res) =>{  //regex      here anything can be inserted at place of *.
-    res.send("its a regex from /a*bc");
-});
-
-app.get("/a/",(req,res) =>{  //regex      only work for exact a.
-    res.send("its a regex contain exact a");
-});
-
-// app.get("/ab+c",(req,res) =>{  //regex      works for /abbc and /abbbbbc   + means in route the character can be repeated.
-//     res.send("+ means in route the character can be repeated");
+// //Get one user by email
+// app.get("/userOne", async (req, res) => {
+//   // call from postman by get method pass a json object emailId it will list only one doc with that emailId
+//   //     {
+//   //     "emailId":"mohammed.favas@example.com"
+//   // }
+//   const userEmail = req.body.emailId;
+//   const user = await User.findOne({ emailId: userEmail });
+//   if (!user) {
+//     return res.status(404).send("User not found");
+//   } else {
+//     res.send(user);
+//   }
 // });
 
-// app.get("/a(bc)?d",(req,res) =>{  //regex      works for /ad and /abcd    ? means optional character that written before it here in () that is optional.
-//     res.send("? means optional in route the character before ?");
+// //Feed API - GET - get all the users from the databse
+// app.get("/feed", async (req, res) => {
+//   try {
+//     const users = await User.find({});
+//     res.send(users);
+//   } catch (error) {
+//     res.status(400).send("Error fetching users: " + error.message);
+//   }
 // });
 
-// app.get("/ab?c",(req,res) =>{  //regex      works for /abc and /ac    ? means optional character that written before it.
-//     res.send("? means optional in route the character before ?");
+// //Get one user by email
+// app.delete("/user", async (req, res) => {
+//   // call from postman by delete method pass a json object, it will delete one doc with that objectId (NB: we passed it has an userId key)
+//   //     {
+//   //     "userId":"objectId here"
+//   // }
+//   const userId = req.body.userId;
+//   try {
+//     //const user = await User.findByIdAndDelete({_id: userId}); //or use short hand
+//     const user = await User.findByIdAndDelete(userId);
+//     res.send("User deleted successfully");
+//   } catch (error) {
+//     res.status(400).send("Error fetching users: " + error.message);
+//   }
 // });
 
-app.get("/study",(req,res) =>{  //query params    call like this =>  http://localhost:777/study?name=favas&password=1234
-    console.log(req.query)
-    res.send("This is from study GET route");
-});
+// Update data of the user
+//send this json data to update from postman by patch method
+// {
+//     "userId":"68a8dad63c28555cab3276e1",
+//     "firstName":"changed to something",
+//     "lastName":"lastName changed"
+// }
 
-app.get("/study/:userId/:name/:password",(req,res) =>{  //dynamic routing   call like this =>  http://localhost:777/study/1/favas/1234
-    console.log(req.params)
-    res.send("This is from study GET route");
-});
+// app.patch("/user/:userId", async (req, res) => {
+//   //const userId = req.body.userId;
+//   const userId = req.params?.userId;
+//   const updateData = req.body;
 
-app.get("/user", (req, res) => {      //GET method
-    res.send("This is from user GET route");
-});
+//   try {
+//     const ALLOWED_UPDATES = ["photoUrl", "about", "gender", "age", "skills"];
+//     const isUpdateAllowed = Object.keys(data).every((key) =>
+//       ALLOWED_UPDATES.includes(key)
+//     );
 
-app.post("/user", (req, res) => {     //POST method
-    res.send("This is from user POST route");
-});
+//     if (!isUpdateAllowed) {
+//       throw new Error("Update not allowed");
+//     }
 
-app.delete("/user", (req, res) => {   //DELETE method
-    res.send("This is from user DELETE route");
-});
+//     if (data?.skills.length > 10) {
+//       throw new Error("Cannot add more than 10 skills");
+//     }
 
-app.use("/hello", (req,res) => {     //app.use  handle all route starts with /hello (order matters line by line)
-    res.send("Hello hello");
-});
-
-app.use("/test", (req,res) => {     //app.use  handle all route starts with /test  (order matters line by line)
-    res.send("test test");
-});
-
-// app.use("/test/xyz", (req,res) => {
-//     res.send("xyz is here");
+//     const user = await User.findByIdAndUpdate(userId, updateData, {
+//       returnDocument: "after",
+//       runValidators: true,
+//     }); //options also available learn from documentation
+//     res.send("User updated successfully");
+//   } catch (error) {
+//     res.status(400).send("Error updating user: " + error.message);
+//   }
 // });
-
-app.use("/", (req,res) => {                 //order matters its written at last as it check only after all other routes for all start with /
-    res.send("Hello world from dashboard");
-});
-
-app.listen(777, () =>{
-    console.log("Server succesfully listening to port 777");
-});
