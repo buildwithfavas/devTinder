@@ -36,8 +36,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
   try {
     //take existing and new password
-    const newPassword = req.body.newPassword;
-    const oldPassword = req.body.oldPassword;
+    const { oldPassword, newPassword } = req.body;
     //Check old password is correct
     const loggedInUser = req.user;
     const isPasswordValid = await loggedInUser.validatePassword(oldPassword);
@@ -52,6 +51,7 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
     const passwordHash = await bcrypt.hash(newPassword, 10);
     loggedInUser.password = passwordHash;
     await loggedInUser.save();
+    res.send("Password updated successfully");
   } catch (error) {
     res.status(400).send("Error updating password: " + error.message);
   }
