@@ -51,7 +51,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
   }
 });
 
-userRouter.get("/user/feed", userAuth, async (req, res) => { //user/feed?page=1&limit=10
+userRouter.get("/feed", userAuth, async (req, res) => { //user/feed?page=1&limit=10
   try {
     const loggedUser = req.user;
 
